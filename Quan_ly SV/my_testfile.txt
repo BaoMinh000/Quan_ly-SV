@@ -1,0 +1,6 @@
+Quach Bao Minh;20;10
+Hoang Tranh Xuan Ngoc;20;10
+Nguyen Van A;30;3.6
+Nguyen Van B ;40;4.56
+Tran Thi AB;16;3
+Nguyen Thi B;23;2
