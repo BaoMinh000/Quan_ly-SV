@@ -1,5 +1,6 @@
 # Quan_ly-SV
 Chạy file manin.cpp sẽ đọc dữ liệu từ tệp txt.
+
 Sử dụng dòng lệnh để sử dụng chức năng.
 Chương trình có cách chức nằng như:
 ---------------------------------------------
