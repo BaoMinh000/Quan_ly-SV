@@ -3,7 +3,6 @@ Chạy file manin.cpp sẽ đọc dữ liệu từ tệp txt.
 Chương trình có cách chức nằng như:
 ---------------------------------------------
                  BANG THAO TAC
----------------------------------------------
 |  Lua chon  |           Thao tac           |
 ---------------------------------------------
 |     1      |     Them sinh vien           |
