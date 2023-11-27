@@ -154,7 +154,7 @@ bool empty(sv a)
 }
 
 //check sise
-int size(sv a)
+double size(sv a)
 {
     int count = 0;
     while (a != NULL)
@@ -360,8 +360,8 @@ void in_danhsach(sv a)
         a = a->next;
 
     }
+    ve_ke_ngang(53);
     cout << endl;
-
 }
 
 //sắp xếp danh sách sinh viên
@@ -413,41 +413,12 @@ void sapxep_ID(sv& a) //sắp xếp sinh viên theo ID tăng dần
                 min = sau;
             }
         }
-        // Đổi chỗ con trỏ nút, không phải giá trị dữ liệu trực tiếp
         Sinhvien tmp = min->s;
         min->s = truoc->s;
         truoc->s = tmp;
     }
 }
  //Tìm kiếm trong danh sách
-void tim_kiem_theoten(const sv a)
-{
-   
-    
-
-}
-
-void luudanhsach(const string& tenfile, sv a)
-{
-    ofstream data(tenfile, ios::trunc);
-    if (data.is_open())
-    {
-        sv p = a;
-        while (p != nullptr)
-        {
-            data << p->s.getID() << ";" << p->s.getTen() << ";"
-                << p->s.getTuoi() << ";" << p->s.getGPA() << endl;
-            p = p->next;
-        }
-        data.close();
-        cout << "Danh sach da duoc luu vao tep thanh cong!" << endl;
-    }
-    else
-    {
-        cout << "Khong the mo tep!" << endl;
-    }
-}
-
 
 // Tạo một ndoe txt
 sv create_node_txt()
@@ -477,7 +448,7 @@ void themcuoi_txt(sv& a, const Sinhvien& sv_tmp)
         p->next = tmp;
     }
 }
-void doc_data_txt(const string &tenfile, sv& a)
+void doc_data_txt(const string& tenfile, sv& a)
 {
     ifstream filtest(tenfile);
     if (filtest.fail())
@@ -516,6 +487,206 @@ void doc_data_txt(const string &tenfile, sv& a)
     }
 
     filtest.close();
+}
+
+
+//Thống kê
+
+void tim_GPA_SV_caonhat(sv a)
+{
+    sv truoc = a;
+    double maxGPA=truoc->s.getGPA();
+
+    sv tmp = truoc;
+    bool bien_in_1an = true;
+
+    double biendemSL_SVGPA=0;
+    for (sv sau = truoc->next; sau != nullptr; sau = sau->next)
+    {
+        //so sanh gpa cao nhất
+        if (sau->s.getGPA() >= truoc->s.getGPA())
+        {
+            maxGPA = sau->s.getGPA();
+            tmp = sau;
+            biendemSL_SVGPA++;
+
+            if (bien_in_1an)
+            {
+                cout << "Sinh vien co GPA cao nhat: " << maxGPA << endl;;
+                ve_daukhung();
+                bien_in_1an = false;
+            }
+            tmp->s.in();
+        }
+        
+
+    }
+    //nếu như không có giá trị lớn hơn thì lấy giá trị đầu là max
+    if (biendemSL_SVGPA == 0)
+    {
+        biendemSL_SVGPA = 1;
+        if (bien_in_1an)
+        {
+            cout << "Sinh vien co GPA cao nhat: " << maxGPA << endl;;
+            ve_daukhung();
+            bien_in_1an = false;
+        }
+        tmp->s.in();
+    }
+
+    ve_ke_ngang(53);
+    
+
+    // tổng số sinh viên
+    double tongSV = size(a);
+
+    // tính toán tỷ lệ phần trăm sinh viên có GPA cao nhẩt
+    double TLGPA = (biendemSL_SVGPA / tongSV) * 100;
+    
+    cout << "Ty le SV co GPA cao nhat:" << TLGPA << "%" << endl;;
+    cout << endl;
+}
+void tim_GPA_SV_thapnhat(sv a)
+{
+    sv truoc = a;
+
+    double minGPA = truoc->s.getGPA();
+
+    sv tmp = truoc;
+    bool bien_in_1an = true;
+
+    double biendemSL_SVGPA = 0;
+
+    for (sv sau = truoc->next; sau != nullptr; sau = sau->next)
+    {
+        //so sanh gpa cao nhất
+        if (sau->s.getGPA() <= minGPA)
+        {
+            minGPA = sau->s.getGPA();
+            tmp = sau;
+            biendemSL_SVGPA++;
+
+            if (bien_in_1an)
+            {
+                cout << "Sinh vien co GPA thap nhat: " << minGPA << endl;;
+                ve_daukhung();
+                bien_in_1an = false;
+            }
+            tmp->s.in();
+        }
+        
+    }
+    //nếu không có giá trị bé nhất thì lấy giá trị đầu
+    if (biendemSL_SVGPA == 0)
+    {
+        biendemSL_SVGPA = 1;
+        if (bien_in_1an)
+        {
+            cout << "Sinh vien co GPA thap nhat: " << minGPA << endl;;
+            ve_daukhung();
+            bien_in_1an = false;
+        }
+        tmp->s.in();
+    }
+    ve_ke_ngang(53);
+
+    // tổng số sinh viên
+    double tongSV = size(a);
+
+    // tính toán tỷ lệ phần trăm sinh viên có GPA cao nhẩt
+    double TLGPA = (biendemSL_SVGPA / tongSV) * 100;
+
+    cout << "Ty le SV co GPA thap nhat:" << TLGPA << "%" << endl;;
+    cout << endl;
+
+}
+void diemTB_ALL_lop(sv a)
+{
+    sv p = a;
+    double diemTB_ALL_lop=0;
+    while (p != NULL)
+    {
+        diemTB_ALL_lop = diemTB_ALL_lop + p->s.getGPA();
+        p = p->next;
+    }
+
+    diemTB_ALL_lop = diemTB_ALL_lop / size(a);
+    cout << "Diem trung binh ca lop: " << diemTB_ALL_lop << endl;
+}
+void phanloaiGPA_SV(sv a)
+{
+    double demGPA_01 = 0;
+    double demGPA_12 = 0;
+    double demGPA_23 = 0; 
+    double demGPA_34 = 0;
+
+    double TL_01;
+    double TL_12;
+    double TL_23;
+    double TL_34;
+
+    sv p = a;
+    while (p != NULL)
+    {
+        if (p->s.getGPA() >= 0 && p->s.getGPA() < 1.00)
+        {
+            demGPA_01++;
+            cout<<"0->1" << demGPA_01 << endl;
+        }
+        else if (p->s.getGPA() >= 1.00 && p->s.getGPA() < 2.00)
+        {
+            demGPA_12++;
+            cout << demGPA_12 << endl;
+
+        }
+        else if (p->s.getGPA() >= 2.00 && p->s.getGPA() < 3.00)
+        {
+            demGPA_23++;
+            cout << demGPA_23 << endl;
+
+        }
+        else if (p->s.getGPA() >= 3.00 && p->s.getGPA() < 4.00)
+        {
+            demGPA_34++;
+            cout << demGPA_34 << endl;
+
+        }
+        p = p->next;
+    }
+
+
+    double SLSV = size(a);
+    TL_01 = demGPA_01 / SLSV;
+    TL_12 = demGPA_12 / SLSV;
+    TL_23 = demGPA_23 / SLSV;
+    TL_34 = demGPA_34 / SLSV;
+
+    cout << "Ty le sinh vien GPA <1: " << TL_01 << "%" << endl;
+    cout << "Ty le sinh vien GPA >1 và <=2: " << TL_12 << "%" << endl;
+    cout << "Ty le sinh vien GPA >2 và <=3: " << TL_23 << "%" << endl;
+    cout << "Ty le sinh vien GPA >3 và <=4: " << TL_34 << "%" << endl;
+
+}
+// Sao lưu
+void luudanhsach(const string& tenfile, sv a)
+{
+    ofstream data(tenfile, ios::trunc);
+    if (data.is_open())
+    {
+        sv p = a;
+        while (p != nullptr)
+        {
+            data << p->s.getID() << ";" << p->s.getTen() << ";"
+                << p->s.getTuoi() << ";" << p->s.getGPA() << endl;
+            p = p->next;
+        }
+        data.close();
+        cout << "Danh sach da duoc luu vao tep thanh cong!" << endl;
+    }
+    else
+    {
+        cout << "Khong the mo tep!" << endl;
+    }
 }
 
 void luachon(int& choice, sv& head, bool &thoat)
@@ -630,6 +801,16 @@ void luachon(int& choice, sv& head, bool &thoat)
     }
     else if (choice == 7) // thống kê
     {
+            //sinh viên-tỷ lệ có GPA cao nhất
+            tim_GPA_SV_caonhat(head);
+            //sinh viên-tỷ lệ GPA thấp nhất
+            tim_GPA_SV_thapnhat(head);
+            
+            //Điểm trung bình cả lớp
+            diemTB_ALL_lop(head);
+            
+            ////Tỷ lệ giứa các GPA
+            //phanloaiGPA_SV(head);
 
     }
     else if (choice == 8)// sao lưu
