@@ -67,7 +67,8 @@ private:
 
 public:
 
-    
+    Sinhvien() : ten(""), tuoi(0), id(0), gpa(0.0) {}
+
     // Getter functions for accessing private members
     int getID() const {
         return id;
@@ -123,15 +124,13 @@ public:
             << setw(4) << tuoi << setw(5) << "|"
             << setw(7) << fixed << setprecision(2) << gpa << setw(3) << "|" << endl;
     }
-
-
 };
 
 struct SV //node
 {
     Sinhvien s;
     SV* next;
-
+    SV() : next(nullptr) {}
 };
 
 typedef struct SV* sv;
@@ -154,7 +153,7 @@ bool empty(sv a)
 }
 
 //check sise
-double size(sv a)
+int size(sv a)
 {
     int count = 0;
     while (a != NULL)
@@ -304,25 +303,31 @@ void xoa_giua(sv& a, int pos)
 {
     int n = size(a);
 
-    if (pos < 0 || pos > n) return;
-    sv truoc = nullptr, sau = a;
-
-    for (int i = 0; i < pos - 1; i++)
-    {
-        truoc = sau;
-        sau = sau->next;
-    }
-    if (truoc == nullptr) //trong danh sách có một phần từ
-    {
-        sv tmp = a;
-        a = a->next;
-        delete tmp;
-    }
+    if (pos < 0 || pos >= n || a == nullptr) return;
     else
     {
-        truoc->next = sau->next;
-        delete sau;
+        if (pos == 0) //trong danh sách có một phần từ
+        {
+            sv tmp = a;
+            a = a->next;
+            delete tmp;
+        }
+        else
+        {
+            sv truoc = nullptr, sau = a;
+            for (int i = 0; i < pos - 1 && sau != nullptr; i++)
+            {
+                truoc = sau;
+                sau = sau->next;
+            }
 
+            // Kiểm tra xem truoc và sau có khác null không trước khi giải tham chiếu
+            if (truoc != nullptr && sau != nullptr)
+            {
+                truoc->next = sau->next;
+                delete sau;
+            }
+        }
     }
 }
 
@@ -491,7 +496,6 @@ void doc_data_txt(const string& tenfile, sv& a)
 
 
 //Thống kê
-
 void tim_GPA_SV_caonhat(sv a)
 {
     sv truoc = a;
@@ -615,7 +619,7 @@ void diemTB_ALL_lop(sv a)
 }
 void phanloaiGPA_SV(sv a)
 {
-    double demGPA_01 = 0;
+    int demGPA_01 = 0;
     double demGPA_12 = 0;
     double demGPA_23 = 0; 
     double demGPA_34 = 0;
@@ -628,38 +632,34 @@ void phanloaiGPA_SV(sv a)
     sv p = a;
     while (p != NULL)
     {
-        if (p->s.getGPA() >= 0 && p->s.getGPA() < 1.00)
+        if (0 < p->s.getGPA() && p->s.getGPA()<=1)
         {
             demGPA_01++;
-            cout<<"0->1" << demGPA_01 << endl;
+            
         }
-        else if (p->s.getGPA() >= 1.00 && p->s.getGPA() < 2.00)
+        if (1 < p->s.getGPA() && p->s.getGPA() <= 2)
         {
             demGPA_12++;
-            cout << demGPA_12 << endl;
 
         }
-        else if (p->s.getGPA() >= 2.00 && p->s.getGPA() < 3.00)
+        if (2 < p->s.getGPA() && p->s.getGPA() <= 3)
         {
             demGPA_23++;
-            cout << demGPA_23 << endl;
 
         }
-        else if (p->s.getGPA() >= 3.00 && p->s.getGPA() < 4.00)
+        if (3 < p->s.getGPA() && p->s.getGPA() <= 4)
         {
             demGPA_34++;
-            cout << demGPA_34 << endl;
 
         }
         p = p->next;
     }
 
-
     double SLSV = size(a);
-    TL_01 = demGPA_01 / SLSV;
-    TL_12 = demGPA_12 / SLSV;
-    TL_23 = demGPA_23 / SLSV;
-    TL_34 = demGPA_34 / SLSV;
+    TL_01 = demGPA_01 / SLSV * 100;
+    TL_12 = demGPA_12 / SLSV * 100;
+    TL_23 = demGPA_23 / SLSV * 100;
+    TL_34 = demGPA_34 / SLSV *100;
 
     cout << "Ty le sinh vien GPA <1: " << TL_01 << "%" << endl;
     cout << "Ty le sinh vien GPA >1 và <=2: " << TL_12 << "%" << endl;
@@ -667,6 +667,8 @@ void phanloaiGPA_SV(sv a)
     cout << "Ty le sinh vien GPA >3 và <=4: " << TL_34 << "%" << endl;
 
 }
+
+
 // Sao lưu
 void luudanhsach(const string& tenfile, sv a)
 {
@@ -778,7 +780,7 @@ void luachon(int& choice, sv& head, bool &thoat)
     {
         int choice_xoa;
         cout << "Lua chon cach sap xep" << endl;
-        cout << " 0-GPA\n 1-Ten\n 2-Tuoi\n 3-ID\n";
+        cout << " 0-GPA\n 1-Ten\n 2-ID\n";
         cout << "Nhap: ";
         cin >> choice_xoa;
         if (choice_xoa == 0) //GPA
@@ -786,15 +788,15 @@ void luachon(int& choice, sv& head, bool &thoat)
             sapxep_gpa(head);
 
         }
-        else if (choice_xoa == 1) //ten
-        {
+        //else if (choice_xoa == ) //ten
+        //{
 
-        }
-        else if (choice_xoa == 2) //tuoi
+        //}
+        else if (choice_xoa == 1) //tuoi
         {
             sapxep_tuoi(head);
         }
-        else if (choice_xoa == 3) //ID
+        else if (choice_xoa == 2) //ID
         {
             sapxep_ID(head);
         }
@@ -810,7 +812,7 @@ void luachon(int& choice, sv& head, bool &thoat)
             diemTB_ALL_lop(head);
             
             ////Tỷ lệ giứa các GPA
-            //phanloaiGPA_SV(head);
+            phanloaiGPA_SV(head);
 
     }
     else if (choice == 8)// sao lưu
