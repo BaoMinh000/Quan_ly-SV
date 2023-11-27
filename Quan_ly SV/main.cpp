@@ -1,10 +1,9 @@
 #include <iostream>
-#include <iomanip>
-#include <string>
+#include <iomanip>// Để sử dụng hàm setw vẽ bảng thao tác
+#include <string> 
 #include<fstream>  // Thư viện cần thiết để làm việc với file
-#include <stdexcept>
 #include<sstream> // Để sử dụng hàm stringstream ss đọc từng hàng từ tệp txt
-
+#include <cstring>//Thư viện để rfind tìm kiếm tên sinh viên
 
 using namespace std;
 
@@ -56,10 +55,6 @@ void bang()
     ve_ke_doc(9, "Thoat chuong trinh");
     ve_ke_ngang(45);
 
-    for (int i = 0; i < 29; i++)
-    {
-        cout << "-";
-    }
     cout << endl;
 }
 
@@ -332,7 +327,7 @@ void xoa_giua(sv& a, int pos)
 }
 
 // in ra thông tin sinh viên
-void in_danhsach(sv a)
+void ve_daukhung()
 {
     //Hiển thị header
     string header_idSV = "STT";
@@ -349,10 +344,14 @@ void in_danhsach(sv a)
     //vẽ header
     ve_ke_ngang(53);
     cout << "|" << setw(idwidth) << header_idSV << setw(2)
-         << "|" << setw(tenWidth) << header_tenSV << setw(7) << "|"
-         << setw(tuoiWidth) << header_tuoiSV << setw(3) << "|"
-         << setw(gpaWidth) << header_gpaSV << setw(4) << "|" << endl;
+        << "|" << setw(tenWidth) << header_tenSV << setw(7) << "|"
+        << setw(tuoiWidth) << header_tuoiSV << setw(3) << "|"
+        << setw(gpaWidth) << header_gpaSV << setw(4) << "|" << endl;
     ve_ke_ngang(53);
+}
+void in_danhsach(sv a)
+{
+    ve_daukhung();
 
     // Duyệt qua linked list 
     while (a != NULL)
@@ -402,42 +401,55 @@ void sapxep_tuoi(sv& a) //sắp xếp sinh viên theo tuổi tăng dần
         truoc->s = tmp;
     }
 }
-
-// Tìm kiếm trong danh sách
-
-// Lưu
-void luu_1SV(const string& tenfile, sv &a )
+void sapxep_ID(sv& a) //sắp xếp sinh viên theo ID tăng dần
 {
-    ofstream data(tenfile, ios::app);
-    //check file
-    if (!data.is_open())
+    for (sv truoc = a; truoc != nullptr; truoc = truoc->next)
     {
+        sv min = truoc;
+        for (sv sau = truoc->next; sau != nullptr; sau = sau->next)
+        {
+            if (sau->s.getID() < min->s.getID())
+            {
+                min = sau;
+            }
+        }
+        // Đổi chỗ con trỏ nút, không phải giá trị dữ liệu trực tiếp
+        Sinhvien tmp = min->s;
+        min->s = truoc->s;
+        truoc->s = tmp;
+    }
+}
+ //Tìm kiếm trong danh sách
+void tim_kiem_theoten(const sv a)
+{
+   
+    
 
-        data << a->s.getID() << ";" << a->s.getTen() << ";"
-             << a->s.getTuoi() << ";" << a->s.getGPA() << endl;
+}
+
+void luudanhsach(const string& tenfile, sv a)
+{
+    ofstream data(tenfile, ios::trunc);
+    if (data.is_open())
+    {
+        sv p = a;
+        while (p != nullptr)
+        {
+            data << p->s.getID() << ";" << p->s.getTen() << ";"
+                << p->s.getTuoi() << ";" << p->s.getGPA() << endl;
+            p = p->next;
+        }
         data.close();
-
-        cout << "File da duoc luu thanh cong!" << endl;
+        cout << "Danh sach da duoc luu vao tep thanh cong!" << endl;
     }
     else
     {
-        cout << "Khong the tao file!" << endl;
-    }
-
-   
-}
-void luudanhsach(const string& tenfile,sv a)
-{
-    sv p = a;
-    while (p != NULL)
-    {
-        luu_1SV(tenfile, p);
-        p = p->next;
-
+        cout << "Khong the mo tep!" << endl;
     }
 }
 
-// Tạo một ndoe 
+
+// Tạo một ndoe txt
 sv create_node_txt()
 {
     sv tmp = new SV();
@@ -445,7 +457,6 @@ sv create_node_txt()
     tmp->next = nullptr;
     return tmp;
 }
-
 // đọc dữ liệu từ txt
 void themcuoi_txt(sv& a, const Sinhvien& sv_tmp)
 {
@@ -493,7 +504,6 @@ void doc_data_txt(const string &tenfile, sv& a)
             ss.ignore();
             getline(ss, name, ';');
             sv_tmp.setTen(name);
-            ss.ignore();
             ss >> tuoi;
             sv_tmp.setTuoi(tuoi);
             ss.ignore();
@@ -549,10 +559,50 @@ void luachon(int& choice, sv& head, bool &thoat)
             xoa_giua(head, pos);
         }
     }
-    else if (choice == 5)
+    else if (choice == 5)// tìm kiếm
     {
+        
+        //tìm kiếm theo tên
+        string tencantim;
+        cout << "Nhap ten can tim: ";
+        cin.ignore();
+        getline(cin, tencantim);
+        bool found = false;
 
-    }
+        //check found để vẽ
+        for (sv p = head; p != NULL; p = p->next)
+        {
+            if (p->s.getTen().find(tencantim) != string::npos)
+            {
+                found = true;
+            }
+
+        }
+
+        //điều kiện để vẽ khung
+        if (found)
+        {
+            ve_daukhung();
+        }
+        
+        for (sv p = head; p != NULL; p = p->next)
+        {
+            if (p->s.getTen().find(tencantim) != string::npos)
+            {
+                p->s.in();             
+            }
+
+        }
+
+        if (!found)
+        {
+            cout << "Khong tim thay ten trong danh sach." << endl;
+        }
+        ve_ke_ngang(53);
+        cout << endl;
+        //tím kiếm theo tuổi
+        //tìm kiếm theo GPA
+    } 
     else if (choice == 6) //sắp xếp
     {
         int choice_xoa;
@@ -560,22 +610,22 @@ void luachon(int& choice, sv& head, bool &thoat)
         cout << " 0-GPA\n 1-Ten\n 2-Tuoi\n 3-ID\n";
         cout << "Nhap: ";
         cin >> choice_xoa;
-        if (choice_xoa == 0) 
+        if (choice_xoa == 0) //GPA
         {
             sapxep_gpa(head);
 
         }
-        else if (choice_xoa == 1)
+        else if (choice_xoa == 1) //ten
+        {
+
+        }
+        else if (choice_xoa == 2) //tuoi
         {
             sapxep_tuoi(head);
         }
-        else if (choice_xoa == 2)
+        else if (choice_xoa == 3) //ID
         {
-
-        }
-        else if (choice_xoa == 3)
-        {
-
+            sapxep_ID(head);
         }
     }
     else if (choice == 7) // thống kê
@@ -584,7 +634,7 @@ void luachon(int& choice, sv& head, bool &thoat)
     }
     else if (choice == 8)// sao lưu
     {
-        luudanhsach("data", head);
+        luudanhsach("data.txt", head);
     }
     else if (choice == 9)
     {
@@ -608,7 +658,7 @@ int main()
         bang();
         cout << "Nhap luc chon: ";
         cin >> choice;
-        luachon(choice, head,thoat);
+        luachon(choice, head, thoat);
     }
     return 0;
 }
