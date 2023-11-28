@@ -58,6 +58,63 @@ void bang()
     cout << endl;
 }
 
+// Kiểm tra xem có phải là số hay không n là kiểu int và d là double
+void ncheck_so(string loai_cannhap, int giatricannhap)
+{
+    while (true)
+    {
+
+        if (!cin) // or if(cin.fail())
+        {
+            // user didn't input a number
+            cin.clear(); // reset failbit
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+            //di chuyển con trỏ về đầu dòng và ghi đè lên dòng
+            //     cout << "\r                        \r";
+            // next, request user reinput
+            cout << "Nhap "<< loai_cannhap << " lai:";
+            cin >> giatricannhap;
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+void dcheck_so(string loai_cannhap, double giatricannhap)
+{
+    while (true)
+    {
+
+        if (!cin) // or if(cin.fail())
+        {
+            // user didn't input a number
+            cin.clear(); // reset failbit
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+            //di chuyển con trỏ về đầu dòng và ghi đè lên dòng
+            //     cout << "\r                        \r";
+            // next, request user reinput
+            cout << "Nhap " << loai_cannhap << " lai:";
+            cin >> giatricannhap;
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+bool check_chuoi(const std::string& str) 
+{
+    for (char c : str) 
+    {
+        if (!isalpha(c)) 
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 class Sinhvien
 {
 private:
@@ -100,15 +157,45 @@ public:
     void nhap()
     {
         cout << "[2] Them sinh vien:" << endl;
+        
+        // Nhập ID
         cout << "Nhap ID: ";
         cin >> id;
+        // Nếu ID không phải là số thì sẽ thỏa điều kiện và nhập lại 
+        ncheck_so("ID", id);
+        
+        // Nhập tên
         cout << "\tTen: ";
         cin.ignore();
         getline(cin, ten);
+
+        //check ten
+        while (true)
+        {
+            if (!check_chuoi(ten))
+            {
+                // user didn't input a number
+                cin.clear(); // reset failbit
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
+                cout << "\n\tNhap lai ten SV: ";
+                getline(cin, ten);
+            }
+            else
+            {
+
+                break;
+            }
+        }
+
+        //Nhâp tuổi
         cout << "\n\tTuoi: ";
         cin >> tuoi;
+        ncheck_so("tuoi", tuoi);
+
+        //Nhập GPA
         cout << "\n\tGPA: ";
         cin >> gpa;
+        dcheck_so("GPA", gpa);
     }
 
     void in() // in 1 sinh viên
@@ -708,6 +795,7 @@ void luachon(int& choice, sv& head, bool &thoat)
         int pos;
         cout << "Nhap vi tri can chen: ";
         cin >> pos;
+        ncheck_so("vi tri", pos);
         suathongtinDS_SV(head,pos);
     }
     else if (choice == 4) // xóa
@@ -729,6 +817,7 @@ void luachon(int& choice, sv& head, bool &thoat)
             int pos;
             cout << "Nhap vi tri can xoa: ";
             cin >> pos;
+            ncheck_so("vi tri", pos);
             xoa_giua(head, pos);
         }
     }
@@ -758,6 +847,7 @@ void luachon(int& choice, sv& head, bool &thoat)
             ve_daukhung();
         }
         
+        //TÌM TÊN
         for (sv p = head; p != NULL; p = p->next)
         {
             if (p->s.getTen().find(tencantim) != string::npos)
@@ -783,6 +873,8 @@ void luachon(int& choice, sv& head, bool &thoat)
         cout << " 0-GPA\n 1-Ten\n 2-ID\n";
         cout << "Nhap: ";
         cin >> choice_xoa;
+        ncheck_so("lua chon",choice_xoa);
+
         if (choice_xoa == 0) //GPA
         {
             sapxep_gpa(head);
@@ -823,6 +915,13 @@ void luachon(int& choice, sv& head, bool &thoat)
     {
         thoat = false;
         cout << "Ket thuc chuong trinh!" << endl;
+    }
+    else
+    {
+        cout << "Nhap lai lua chon: ";
+        cin >> choice;
+        luachon(choice,head, thoat);
+        
     }
 }
 
