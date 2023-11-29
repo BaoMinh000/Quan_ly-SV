@@ -5,6 +5,12 @@
 #include<sstream> // Để sử dụng hàm stringstream ss đọc từng hàng từ tệp txt
 #include <cstring>//Thư viện để rfind tìm kiếm tên sinh viên
 
+#include <thread> // Để sử dụng this_thread::sleep_for
+#include <chrono> // Để sử dụng std::chrono::seconds
+#include <cstdlib>  // Để sử dụng hàm system
+// thư viện giúp viết dấu của tiếng việt, thêm thư viện này thì cout phải đổi sang cout
+#include <io.h>
+#include <fcntl.h>
 using namespace std;
 
 void ve_ke_ngang(int chieu_rong )
@@ -32,7 +38,7 @@ void bang()
     ve_ke_ngang(45);
     // In tiêu đề bảng thao tác
     cout << setw(30) << "BANG THAO TAC" << endl;
-
+    this_thread::sleep_for(chrono::milliseconds(500));
     ve_ke_ngang(45);
     cout << "|  Lua chon  |           Thao tac           |" << endl;
     ve_ke_ngang(45);
@@ -40,7 +46,7 @@ void bang()
     ve_ke_ngang(45);
     ve_ke_doc(2, "In danh sach SV");
     ve_ke_ngang(45);
-    ve_ke_doc(3, "Sua thong tin SV");//
+    ve_ke_doc(3, "Sua thong tin SV");
     ve_ke_ngang(45);
     ve_ke_doc(4, "Xoa sinh vien");
     ve_ke_ngang(45);
@@ -48,9 +54,9 @@ void bang()
     ve_ke_ngang(45);
     ve_ke_doc(6, "Sap xep danh sach SV");
     ve_ke_ngang(45);
-    ve_ke_doc(7, "Thong ke");//
+    ve_ke_doc(7, "Thong ke");
     ve_ke_ngang(45);
-    ve_ke_doc(8, "Sao Luu du lieu");//
+    ve_ke_doc(8, "Sao Luu du lieu");
     ve_ke_ngang(45);
     ve_ke_doc(9, "Thoat chuong trinh");
     ve_ke_ngang(45);
@@ -103,16 +109,53 @@ void dcheck_so(string loai_cannhap, double giatricannhap)
         }
     }
 }
-bool check_chuoi(const std::string& str) 
+
+string string_khongphaichu_in(string &ten)
 {
-    for (char c : str) 
+    if (!ten.empty())
     {
-        if (!isalpha(c)) 
+        for (size_t i = 0; i < ten.size(); i++)
         {
-            return false;
+            if (i == 0 || ten[i - 1] == ' ')
+            {
+                if (ten[i] >= 'a' && ten[i] <= 'z')
+                {
+                    ten[i] = ten[i] - 32;
+                }
+            }
         }
     }
-    return true;
+    return ten;
+}
+
+bool check_chuoi(const string str)
+{
+    for (int i = 0; i< str.size();i++)
+    {
+        if (str[i]>='a' && str[i] <='z' || str[i] >= 'A' && str[i] <= 'Z')
+        {
+            return true;
+        }
+    }
+    return false;
+}
+void input_ten_sv(string& ten)
+{
+    while (true)
+    {
+        if (check_chuoi(ten)==false)
+        {
+            // user didn't input a valid string
+            std::cin.clear(); // reset failbit
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // skip bad input
+            std::cout << "\n\tNhap lai ten SV: ";
+            std::getline(std::cin, ten);
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 class Sinhvien
@@ -168,24 +211,11 @@ public:
         cout << "\tTen: ";
         cin.ignore();
         getline(cin, ten);
-
         //check ten
-        while (true)
-        {
-            if (!check_chuoi(ten))
-            {
-                // user didn't input a number
-                cin.clear(); // reset failbit
-                cin.ignore(numeric_limits<streamsize>::max(), '\n'); //skip bad input
-                cout << "\n\tNhap lai ten SV: ";
-                getline(cin, ten);
-            }
-            else
-            {
-
-                break;
-            }
-        }
+        check_chuoi(ten);
+        input_ten_sv(ten);
+        // Chuyển đổi chữ cái đầu thành chữ in hoa
+        string_khongphaichu_in(ten);
 
         //Nhâp tuổi
         cout << "\n\tTuoi: ";
@@ -301,6 +331,7 @@ void suathongtin(sv& a)
         cout << "Nhap ten sinh vien: ";
         cin.ignore();
         getline(cin,tensv);
+        string_khongphaichu_in(tensv);
         a->s.setTen(tensv);
         cout << endl;
 
@@ -770,6 +801,16 @@ void luudanhsach(const string& tenfile, sv a)
             p = p->next;
         }
         data.close();
+        
+        //tăng độ trễ 
+        cout << "Dang luu";
+        for (int i = 0; i < 3; i++)
+        {
+            cout << ".";
+            this_thread::sleep_for(chrono::seconds(1));
+        }
+        cout << "\r                             \r";
+        cout << endl;
         cout << "Danh sach da duoc luu vao tep thanh cong!" << endl;
     }
     else
@@ -804,6 +845,7 @@ void luachon(int& choice, sv& head, bool &thoat)
         cout << "Nhap lua chon cach xoa" << endl;
         cout << " 0-Dau\n 1-Cuoi\n 2-Chon\n";
         cin >> choice_xoa;
+        ncheck_so("lua chon", choice_xoa);
         if (choice_xoa == 0) // xóa đầu
         {
             xoa_dau(head);
@@ -870,7 +912,7 @@ void luachon(int& choice, sv& head, bool &thoat)
     {
         int choice_xoa;
         cout << "Lua chon cach sap xep" << endl;
-        cout << " 0-GPA\n 1-Ten\n 2-ID\n";
+        cout << " 0-GPA\n 1-tuoi\n 2-ID\n";
         cout << "Nhap: ";
         cin >> choice_xoa;
         ncheck_so("lua chon",choice_xoa);
@@ -880,10 +922,6 @@ void luachon(int& choice, sv& head, bool &thoat)
             sapxep_gpa(head);
 
         }
-        //else if (choice_xoa == ) //ten
-        //{
-
-        //}
         else if (choice_xoa == 1) //tuoi
         {
             sapxep_tuoi(head);
@@ -925,22 +963,38 @@ void luachon(int& choice, sv& head, bool &thoat)
     }
 }
 
+
 int main()
 {
+    
 
-    sv head = nullptr;    
-
+    sv head = nullptr;
     int choice = 0;
     bool thoat = true;
-
     doc_data_txt("data.txt", head);
+    
+
+    
+    cout << "Dang tai du lieu len!";
+    for (int i = 0; i < 3; i++)
+    {
+        cout << ".";
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+    cout << "Hoan Thanh";
+    this_thread::sleep_for(chrono::seconds(1));
+    system("cls");
+
+
 
     while (thoat)
     { 
-        bang();
+        bang(); 
         cout << "Nhap luc chon: ";
         cin >> choice;
         luachon(choice, head, thoat);
+        this_thread::sleep_for(chrono::seconds(1));
+
     }
     return 0;
 }
