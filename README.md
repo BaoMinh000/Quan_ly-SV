@@ -33,6 +33,3 @@ Chương trình quản lý sinh viên là một ứng dụng dòng lệnh đư�
 - **Thống Kê:** Hiển thị thống kê về danh sách sinh viên (ví dụ: số lượng sinh viên, độ tuổi trung bình).
 - **Sao Lưu Dữ Liệu:** Lưu trữ dữ liệu hiện tại vào một tệp để đảm bảo an toàn.
 - **Thoát Chương Trình:** Kết thúc chương trình.
-
-
-**Chúc bạn có một trải nghiệm tốt với chương trình quản lý sinh viên!**
