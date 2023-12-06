@@ -23,7 +23,7 @@ Chương trình quản lý sinh viên là một ứng dụng dòng lệnh đư�
 3. Làm theo hướng dẫn trên màn hình để hoàn thành mỗi thao tác.
 
 ## Đặc Điểm Chương Trình
-- **Bắt đầu: ** CHương trình sẽ tự động đọc dữ lệu từ tệp txt đã lưu để sử dụng.
+- **Bắt đầu:** Chương trình sẽ tự động đọc dữ lệu từ tệp txt đã lưu để sử dụng.
 - **Thêm Sinh Viên:** Cho phép nhập thông tin của sinh viên mới và thêm vào danh sách.
 - **In Danh Sách SV:** In ra màn hình danh sách sinh viên hiện có.
 - **Sửa Thông Tin SV:** Cho phép sửa đổi thông tin của một sinh viên.
